@@ -9,6 +9,7 @@ use App\Models\Product;
 use App\Models\User;
 use Filament\Actions\Testing\TestAction;
 use Illuminate\Foundation\Testing\RefreshDatabase;
+use Illuminate\Support\Facades\Hash;
 use Livewire\Livewire;
 use Tests\TestCase;
 
@@ -25,6 +26,19 @@ class AdminTest extends TestCase
         $admin->save();
 
         $this->actingAs($admin)->get('/admin')->assertOk();
+    }
+
+    public function test_make_admin_command_grants_access_and_resets_the_password(): void
+    {
+        $user = User::factory()->create(['email' => 'admin@admin.com']);
+
+        $this->artisan('shop:make-admin', ['email' => 'Admin@Admin.com', '--password' => 'nouveau-mdp'])->assertSuccessful();
+
+        $user->refresh();
+        $this->assertTrue($user->is_admin);
+        $this->assertTrue(Hash::check('nouveau-mdp', $user->password));
+
+        $this->assertTrue(auth()->attempt(['email' => 'admin@admin.com', 'password' => 'nouveau-mdp']));
     }
 
     public function test_admin_pages_render(): void

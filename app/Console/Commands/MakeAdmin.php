@@ -10,21 +10,28 @@ use Illuminate\Console\Command;
 use function Laravel\Prompts\password;
 use function Laravel\Prompts\text;
 
-#[Signature('shop:make-admin {email?}')]
-#[Description('Create an admin account for the back office (/admin)')]
+#[Signature('shop:make-admin {email?} {--password= : Set the password without prompting}')]
+#[Description('Create an admin account for the back office (/admin), or grant admin rights and reset the password of an existing one')]
 class MakeAdmin extends Command
 {
     public function handle(): int
     {
-        $email = $this->argument('email') ?? text('E-mail', required: true);
+        $email = strtolower(trim($this->argument('email') ?? text('E-mail', required: true)));
 
         $user = User::firstOrNew(['email' => $email]);
         $user->name ??= text('Name', default: 'Admin', required: true);
 
-        if (! $user->exists) {
-            $user->password = password('Password', required: true, validate: fn ($value) => strlen($value) < 10 ? 'At least 10 characters.' : null);
+        // Always (re)set the password, so the command also recovers an account whose password is unknown.
+        $password = $this->option('password')
+            ?? password('Password', required: true, validate: fn ($value) => strlen($value) < 8 ? 'At least 8 characters.' : null);
+
+        if (strlen($password) < 8) {
+            $this->error('The password must be at least 8 characters.');
+
+            return self::FAILURE;
         }
 
+        $user->password = $password;
         $user->is_admin = true;
         $user->save();
 

@@ -23,7 +23,7 @@ cp .env.example .env
 php artisan key:generate
 php artisan migrate --seed               # catégories et modèles de téléphone
 php artisan db:seed --class=DemoSeeder   # optionnel : 3 produits de démonstration
-php artisan shop:make-admin vous@exemple.ch
+php artisan shop:make-admin vous@exemple.ch   # crée le compte admin (relancer pour changer le mot de passe)
 php artisan serve
 ```
 
