@@ -83,11 +83,11 @@ return [
     'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
 
     /*
-    | Languages offered by the shop. The first one is the fallback used when
-    | the visitor's browser asks for none of them.
+    | Languages offered by the shop, in the order shown in the language menu.
+    | Visitors whose browser asks for none of them get the fallback locale.
     */
 
-    'supported_locales' => ['en', 'de', 'fr', 'it'],
+    'supported_locales' => ['de', 'fr', 'it', 'en'],
 
     'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
 

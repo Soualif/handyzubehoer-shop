@@ -3,6 +3,7 @@
 namespace App\Support;
 
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Route;
 
 class Locale
 {
@@ -41,6 +42,26 @@ class Locale
             }
         }
 
-        return self::supported()[0];
+        return self::fallback();
+    }
+
+    public static function fallback(): string
+    {
+        return config('app.fallback_locale');
+    }
+
+    /**
+     * The current page in another language (same route and parameters).
+     */
+    public static function switchUrl(string $locale): string
+    {
+        $route = Route::current();
+
+        if (! $route?->getName()) {
+            return route('home', ['locale' => $locale]);
+        }
+
+        return route($route->getName(), ['locale' => $locale] + $route->parameters())
+            .(request()->getQueryString() ? '?'.request()->getQueryString() : '');
     }
 }

@@ -2,10 +2,13 @@
 
 namespace Tests\Feature;
 
+use Illuminate\Foundation\Testing\RefreshDatabase;
 use Tests\TestCase;
 
 class LocaleTest extends TestCase
 {
+    use RefreshDatabase;
+
     public function test_root_redirects_to_browser_language(): void
     {
         $this->get('/', ['Accept-Language' => 'de-CH,de;q=0.9,en;q=0.8'])->assertRedirect('/de');
@@ -41,8 +44,13 @@ class LocaleTest extends TestCase
             ->assertCookie('locale', 'fr', false);
 
         $this->get('/de')->assertSee('Handyzubehör mit Lieferung in die ganze Schweiz');
-        $this->get('/it')->assertSee('Il negozio apre presto.');
-        $this->get('/en')->assertSee('Shop opening soon.');
+        $this->get('/it')->assertSee('Accessori per cellulari con consegna in tutta la Svizzera');
+        $this->get('/en')->assertSee('Mobile accessories delivered across Switzerland');
+    }
+
+    public function test_language_menu_links_to_the_same_page(): void
+    {
+        $this->get('/fr/info/terms')->assertSee('href="'.url('/de/info/terms').'"', false);
     }
 
     public function test_unsupported_locale_prefix_is_not_found(): void

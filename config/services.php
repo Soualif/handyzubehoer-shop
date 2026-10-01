@@ -35,4 +35,16 @@ return [
         ],
     ],
 
+    'stripe' => [
+        'secret' => env('STRIPE_SECRET'),
+        'webhook_secret' => env('STRIPE_WEBHOOK_SECRET'),
+    ],
+
+    'cj' => [
+        'api_key' => env('CJ_API_KEY'),
+        'base_url' => env('CJ_BASE_URL', 'https://developers.cjdropshipping.com/api2.0/v1'),
+        'logistic_name' => env('CJ_LOGISTIC_NAME', 'CJPacket Ordinary'),
+        'from_country' => env('CJ_FROM_COUNTRY', 'CN'),
+    ],
+
 ];
